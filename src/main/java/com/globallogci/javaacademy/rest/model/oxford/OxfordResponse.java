@@ -1,6 +1,7 @@
 package com.globallogci.javaacademy.rest.model.oxford;
 
 import java.util.List;
+import java.util.Optional;
 
 public class OxfordResponse {
 
@@ -40,4 +41,17 @@ public class OxfordResponse {
     public void setWord(String word) {
         this.word = word;
     }
+
+    public Optional<String> getFirstSense() {
+        return results.stream().findFirst()
+                .map(Result::getLexicalEntries)
+                .flatMap(lexicalEntries -> lexicalEntries.stream().findFirst())
+                .map(LexicalEntry::getEntries)
+                .flatMap(entries -> entries.stream().findFirst())
+                .map(Entry::getSenses)
+                .flatMap(senses -> senses.stream().findFirst())
+                .map(Sens::getDefinitions)
+                .flatMap(definitions -> definitions.stream().findFirst());
+    }
+
 }

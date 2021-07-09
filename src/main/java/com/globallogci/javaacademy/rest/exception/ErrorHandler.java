@@ -20,8 +20,18 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UpdatingPaymentWithoutIdException.class)
     protected ResponseEntity<Object> handleUpdatingPaymentWithoutIdException(Exception exception, WebRequest webRequest) {
         logger.error(exception.getMessage(), exception);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body("You cannot provide entity to update without id");
+    }
+
+
+    @ExceptionHandler(DictionaryApiException.class)
+    protected ResponseEntity<Object> handleDictionaryApiException(Exception exception, WebRequest webRequest) {
+        logger.error(exception.getMessage(), exception);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Cannot connect to Oxford Dictionaries: " + exception.getMessage());
     }
 
     @Override

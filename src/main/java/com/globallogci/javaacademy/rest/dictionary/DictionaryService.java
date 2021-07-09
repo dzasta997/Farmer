@@ -1,12 +1,13 @@
 package com.globallogci.javaacademy.rest.dictionary;
 
-import com.globallogci.javaacademy.rest.model.oxford.OxfordResponse;
+import com.globallogci.javaacademy.rest.model.oxford.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -14,21 +15,31 @@ public class DictionaryService {
 
     private static final String APP_ID = "";
     private static final String APP_KEY = "";
-
     private static final String LANGUAGE = "en-gb";
 
-    public String getInfo(final String word) {
-        final String strictMatch = "false";
-        final String word_id = word.toLowerCase();
-        final String restUrl = "https://od-api.oxforddictionaries.com:443/api/v2/entries/" + LANGUAGE + "/" + word_id + "?" + "strictMatch=" + strictMatch;
 
-        final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate dictionaryRestTemplate;
+
+    public DictionaryService(RestTemplate dictionaryRestTemplate) {
+        this.dictionaryRestTemplate = dictionaryRestTemplate;
+    }
+
+    public String getInfo(final String word) {
+        final String wordId = word.toLowerCase();
+        final String restUrl = "https://od-api.oxforddictionaries.com:443/api/v2/entries/" + LANGUAGE + "/" + wordId ;
+
         final HttpHeaders headers = createHeader();
         final HttpEntity<Object> objectHttpEntity = new HttpEntity<>(headers);
 
-        final Map<Object, Object> params = Map.of();
-        final ResponseEntity<OxfordResponse> exchange = restTemplate.exchange(restUrl, HttpMethod.GET, objectHttpEntity, OxfordResponse.class, params);
-        return exchange.getBody().getResults().get(0).getLexicalEntries().get(0).getEntries().get(0).getSenses().get(0).getDefinitions().get(0);
+        final Map<Object, Object> params = Map.of(
+                "strictMatch", false
+        );
+        final ResponseEntity<OxfordResponse> exchange = dictionaryRestTemplate.exchange(restUrl, HttpMethod.GET, objectHttpEntity, OxfordResponse.class, params);
+
+        return Optional.of(exchange)
+                .map(HttpEntity::getBody)
+                .flatMap(OxfordResponse::getFirstSense)
+                .orElse("");
     }
 
     private HttpHeaders createHeader() {
