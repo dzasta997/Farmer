@@ -3,33 +3,30 @@ package com.globallogci.javaacademy.rest.mapper;
 import com.globallogci.javaacademy.rest.dto.PaymentDto;
 import com.globallogci.javaacademy.rest.model.Payment;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @Component
-public class PaymentMapper extends EntityDtoMapper<Payment, PaymentDto> {
+public class PaymentMapper {
 
-    @Override
-    public PaymentDto convertToDto(Payment entity) {
+    public Payment toEntity(PaymentDto dto) {
+        final Payment payment = new Payment();
+        payment.setStatus(dto.getStatus());
+        payment.setId(dto.getId());
+        payment.setDescription(dto.getDescription());
+        payment.setAmount(dto.getAmount());
+        return payment;
+    }
+
+    public PaymentDto toDto(Payment entity) {
         final PaymentDto dto = new PaymentDto();
-        dto.setAmount(entity.getAmount());
-        dto.setCurrency(entity.getCurrency());
-        dto.setDescription(entity.getDescription());
+        final String status = Optional.ofNullable(entity.getStatus())
+                .map(String::toUpperCase)
+                .orElse("UNKNOWN");
+        dto.setStatus(status);
         dto.setId(entity.getId());
-        dto.setStatus(StringUtils.capitalize(entity.getStatus()));
-        dto.setValidToDate(entity.getValidToDate());
+        dto.setDescription(entity.getDescription());
+        dto.setAmount(entity.getAmount());
         return dto;
     }
-
-    @Override
-    public Payment convertToEntity(PaymentDto dto) {
-        final Payment entity = new Payment();
-        entity.setAmount(dto.getAmount());
-        entity.setCurrency(dto.getCurrency());
-        entity.setDescription(dto.getDescription());
-        entity.setId(dto.getId());
-        entity.setStatus(dto.getStatus() == null ? null : dto.getStatus().toUpperCase());
-        entity.setValidToDate(dto.getValidToDate());
-        return entity;
-    }
-
 }

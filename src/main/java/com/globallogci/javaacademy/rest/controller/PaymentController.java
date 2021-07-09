@@ -1,6 +1,5 @@
 package com.globallogci.javaacademy.rest.controller;
 
-import com.globallogci.javaacademy.rest.exception.EntityNotFoundException;
 import com.globallogci.javaacademy.rest.dto.PaymentDto;
 import com.globallogci.javaacademy.rest.mapper.PaymentMapper;
 import com.globallogci.javaacademy.rest.model.Payment;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,51 +25,49 @@ public class PaymentController {
         this.paymentMapper = paymentMapper;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PaymentDto> getPayment(@PathVariable Long id) {
-        return paymentService.getPayment(id)
-                .map(paymentMapper::convertToDto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public ResponseEntity<List<PaymentDto>> getPayments() {
-        final List<Payment> payments = paymentService.getPayments();
-        return ResponseEntity.ok(paymentMapper.convertToDtos(payments));
-    }
-
     @PostMapping
     public ResponseEntity<PaymentDto> createPayment(@Valid @RequestBody PaymentDto paymentDto) {
-        final Payment payment = paymentMapper.convertToEntity(paymentDto);
+        final Payment payment = paymentMapper.toEntity(paymentDto);
         final Payment createdPayment = paymentService.createPayment(payment);
-        return new ResponseEntity<>(paymentMapper.convertToDto(createdPayment), HttpStatus.CREATED);
+        final PaymentDto createdPaymentDto = paymentMapper.toDto(createdPayment);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdPaymentDto);
     }
 
     @PutMapping
-    public ResponseEntity<PaymentDto> updatePayment(@RequestBody PaymentDto paymentDto) {
-        final Payment payment = paymentMapper.convertToEntity(paymentDto);
+    public ResponseEntity<PaymentDto> updatePayment(@Valid @RequestBody PaymentDto paymentDto) {
+        final Payment payment = paymentMapper.toEntity(paymentDto);
         final Payment updatedPayment = paymentService.updatePayment(payment);
-        return new ResponseEntity<>(paymentMapper.convertToDto(updatedPayment), HttpStatus.CREATED);
+        final PaymentDto createdPaymentDto = paymentMapper.toDto(updatedPayment);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(createdPaymentDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PaymentDto> patchPayment(@PathVariable Long id, @RequestBody Map<String, Object> fields) {
+        final Payment payment = paymentService.getById(id).orElseThrow();
+        final PaymentDto paymentDto = paymentMapper.toDto(payment);
+        fields.forEach((fieldName, fieldValue) -> {
+            final Field field = ReflectionUtils.findField(PaymentDto.class, fieldName);
+            if (field != null) {
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, paymentDto, fieldValue);
+            }
+        });
+        final Payment updatedPayment = paymentService.updatePayment(paymentMapper.toEntity(paymentDto));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(paymentMapper.toDto(updatedPayment));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PaymentDto> deletePayment(@PathVariable Long id) {
+    public ResponseEntity<PaymentDto> patchPayment(@PathVariable Long id) {
         paymentService.deletePayment(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping( "/{id}")
-    public void saveManager(@PathVariable Long id, @RequestBody Map<String, Object> fields) {
-        Payment payment = paymentService.getPayment(id).orElseThrow(() -> new EntityNotFoundException(id, Payment.class));
-        fields.forEach((fieldName, fieldValue) -> {
-            Field field = ReflectionUtils.findField(Payment.class, fieldName);
-            if (field != null) {
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, payment, fieldValue);
-            }
-        });
-        paymentService.updatePayment(payment);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 
 }

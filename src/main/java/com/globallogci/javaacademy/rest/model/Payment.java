@@ -1,8 +1,9 @@
 package com.globallogci.javaacademy.rest.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 public class Payment {
@@ -13,16 +14,11 @@ public class Payment {
 
     private BigDecimal amount;
 
-    private Currency currency;
+    private String status;
 
     private String description;
 
-    private String status;
-
     private String secretToken;
-
-    @Temporal(TemporalType.DATE)
-    private Date validToDate;
 
     public Long getId() {
         return id;
@@ -40,12 +36,12 @@ public class Payment {
         this.amount = amount;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDescription() {
@@ -56,27 +52,11 @@ public class Payment {
         this.description = description;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getSecretToken() {
         return secretToken;
     }
 
     public void setSecretToken(String secretToken) {
         this.secretToken = secretToken;
-    }
-
-    public Date getValidToDate() {
-        return validToDate;
-    }
-
-    public void setValidToDate(Date validToDate) {
-        this.validToDate = validToDate;
     }
 }

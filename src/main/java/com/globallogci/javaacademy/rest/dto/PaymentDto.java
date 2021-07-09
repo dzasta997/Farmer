@@ -1,25 +1,21 @@
 package com.globallogci.javaacademy.rest.dto;
 
-import com.globallogci.javaacademy.rest.model.Currency;
-
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class PaymentDto {
 
     private Long id;
 
+
     @NotNull
     private BigDecimal amount;
 
-    private Currency currency;
-
-    private String description;
-
+    @NotBlank
     private String status;
 
-    private Date validToDate;
+    private String description;
 
     public Long getId() {
         return id;
@@ -37,12 +33,12 @@ public class PaymentDto {
         this.amount = amount;
     }
 
-    public Currency getCurrency() {
-        return currency;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDescription() {
@@ -53,19 +49,4 @@ public class PaymentDto {
         this.description = description;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getValidToDate() {
-        return validToDate;
-    }
-
-    public void setValidToDate(Date validToDate) {
-        this.validToDate = validToDate;
-    }
 }

@@ -1,13 +1,13 @@
-package com.globallogci.javaacademy.rest.dictionary;
+package com.globallogci.javaacademy.rest.model.oxford;
 
 import java.util.List;
-import java.util.Map;
 
 public class OxfordResponse {
 
     private String id;
-    private Map<String, Object> metadata;
+    private Metadata metadata;
     private List<Result> results;
+    private String word;
 
     public String getId() {
         return id;
@@ -17,11 +17,11 @@ public class OxfordResponse {
         this.id = id;
     }
 
-    public Map<String, Object> getMetadata() {
+    public Metadata getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
@@ -31,5 +31,13 @@ public class OxfordResponse {
 
     public void setResults(List<Result> results) {
         this.results = results;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
     }
 }
