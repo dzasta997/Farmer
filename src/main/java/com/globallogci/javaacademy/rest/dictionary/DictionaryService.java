@@ -1,9 +1,12 @@
 package com.globallogci.javaacademy.rest.dictionary;
 
+import com.globallogci.javaacademy.rest.exception.DictionaryApiException;
 import com.globallogci.javaacademy.rest.model.oxford.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +22,11 @@ public class DictionaryService {
 
 
     private final RestTemplate dictionaryRestTemplate;
+    private final WebClient dictionaryWebClient;
 
-    public DictionaryService(RestTemplate dictionaryRestTemplate) {
+    public DictionaryService(RestTemplate dictionaryRestTemplate, WebClient dictionaryWebClient) {
         this.dictionaryRestTemplate = dictionaryRestTemplate;
+        this.dictionaryWebClient = dictionaryWebClient;
     }
 
     public String getInfo(final String word) {
@@ -41,6 +46,25 @@ public class DictionaryService {
                 .flatMap(OxfordResponse::getFirstSense)
                 .orElse("");
     }
+
+    public String getInfoWebClient(final String word) {
+        final String wordId = word.toLowerCase();
+        final OxfordResponse response = dictionaryWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v2/entries/" + LANGUAGE + "/" + wordId)
+                        .queryParam("strictMatch", false)
+                        .build()
+                )
+                .retrieve()
+                .bodyToMono(OxfordResponse.class)
+                .block();
+
+        return Optional.ofNullable(response)
+                .flatMap(OxfordResponse::getFirstSense)
+                .orElse("");
+    }
+
 
     private HttpHeaders createHeader() {
         final HttpHeaders httpHeaders = new HttpHeaders();

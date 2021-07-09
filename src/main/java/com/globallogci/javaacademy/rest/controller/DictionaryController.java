@@ -18,4 +18,9 @@ public class DictionaryController {
     public String getInfo(@PathVariable String word) {
         return dictionaryService.getInfo(word);
     }
+
+    @GetMapping("words/webclient/{word}")
+    public String getInfoWebClient(@PathVariable String word) {
+        return dictionaryService.getInfoWebClient(word);
+    }
 }
