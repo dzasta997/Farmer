@@ -23,7 +23,7 @@ public class WebClientConfig {
     public WebClient weatherWebClient(@Value("${javaacademy.weather.api.apiKey}") final String apiKey,
                                       @Value("${javaacademy.weather.api.url.base}") final String baseUrl) {
         final Map<String, String> uriVariables = Map.of(
-                "appid", apiKey,
+                "apikey", apiKey,
                 "units", "metric"
         );
         return WebClient.builder()

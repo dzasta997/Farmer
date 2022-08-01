@@ -27,6 +27,8 @@ public class WeatherWebClientApi implements WeatherApi {
         return weatherWebClient.get()
                 .uri(uri -> uri.path(prefixUrl)
                         .queryParam("q", city)
+                        .queryParam("apikey", "{apikey}")
+                        .queryParam("units", "{units}")
                         .build())
                 .retrieve()
                 .bodyToMono(WeatherInfo.class)
