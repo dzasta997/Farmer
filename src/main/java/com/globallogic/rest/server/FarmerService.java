@@ -1,5 +1,6 @@
 package com.globallogic.rest.server;
 
+import com.globallogic.rest.exception.ApplicationException;
 import com.globallogic.rest.exception.UpdatingEntityWithoutIdException;
 import com.globallogic.rest.model.Farmer;
 import com.globallogic.rest.reposiotry.FarmerRepository;
@@ -18,7 +19,14 @@ public class FarmerService {
     }
 
     public Farmer createFarmer(final Farmer farmer) {
+        if(getByName(farmer) !=null){
+            throw new ApplicationException("Farmer already exists");
+        }
         return farmerRepository.save(farmer);
+    }
+
+    private Farmer getByName(Farmer farmer) {
+        return farmerRepository.findByName(farmer.getName());
     }
 
     public Farmer updateFarmer(final Farmer farmer) {

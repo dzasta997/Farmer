@@ -125,12 +125,17 @@ class FarmerControllerTest {
                 .setCity(cityName)
                 .setName(farmerName)
                 .setStatus("status");
-        mockMvc.perform(post("/farmers")
+        String result = mockMvc.perform(post("/farmers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content( new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated())
-                .andDo(print());
-        mockMvc.perform(get("/farmers/1"))
+                .andDo(print())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        FarmerDto created = mapper.readValue(result, FarmerDto.class);
+        mockMvc.perform(get("/farmers/"+created.getId()))
                 .andExpect(status().isOk());
     }
 
