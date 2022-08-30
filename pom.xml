@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>JavaAcademyRest</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>JavaAcademyRest</name>
     <description>JavaAcademyRest</description>
     <properties>
@@ -17,7 +17,7 @@
     </properties>
     <scm>
         <connection>scm:git:https://github.com/dzasta997/Farmer.git</connection>
-      <tag>JavaAcademyRest-0.0.1</tag>
+      <tag>HEAD</tag>
   </scm>
     <dependencies>
         <dependency>
