@@ -26,7 +26,10 @@ public class FarmerController {
         this.farmerService = farmerService;
         this.farmerMapper = farmerMapper;
     }
-
+    @GetMapping("/hello")
+    public ResponseEntity<String> testingChanges(){
+        return ResponseEntity.ok().body("Hello!");
+    }
 
     @GetMapping
     public ResponseEntity<List<FarmerDto>> getAllFarmers() {
